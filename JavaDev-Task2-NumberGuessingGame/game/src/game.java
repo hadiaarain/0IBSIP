@@ -1,87 +1,125 @@
+import java.util.Random;
 import java.util.Scanner;
 
-public class game{
-    int HighestScore = 0;
-    int menus=0;
-    public void gamedisplay(){
+public class game {
 
-        while(menus != 4) {
-            System.out.println("================================");
-        System.out.println("   Number Guessing Game   ");
-        System.out.println("================================");
-        System.out.println("   1. Start Game   ");
-        System.out.println("   2. View Highest Score   ");
-        System.out.println("   3. Reset Highest Score   ");
-        System.out.println("   4. Exit   ");
+    Scanner sc = new Scanner(System.in);
+    Random random = new Random();
 
-        System.out.print("Enter your choice: ");
-        int menu = new Scanner(System.in).nextInt();
-        switch(menu) {
-            case 1:
-                startGame();
-                break;
-            case 2:
-                viewHighestScore();
-                break;
-            case 3:
-                resetHighestScore();
-                break;
-            case 4:
-                System.out.println("Exiting the game. Goodbye!");
-                break;
+    int highestScore = 0;
+    int round = 1;
 
-            default:
-                System.out.println("Invalid input. Please try again.");
-                break; 
-        }
-        
+    public void gameDisplay() {
+
+        while (true) {
+
+            System.out.println("\n==============================");
+            System.out.println("     NUMBER GUESSING GAME");
+            System.out.println("==============================");
+            System.out.println("1. Start Game");
+            System.out.println("2. View Highest Score");
+            System.out.println("3. Reset Highest Score");
+            System.out.println("4. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1:
+                    startGame();
+                    break;
+
+                case 2:
+                    viewHighestScore();
+                    break;
+
+                case 3:
+                    resetHighestScore();
+                    break;
+
+                case 4:
+                    System.out.println("Thank you for playing!");
+                    return;
+
+                default:
+                    System.out.println("Invalid Choice.");
+            }
         }
     }
 
     public void startGame() {
-        System.out.println("Starting the game...");
-        int userGuess = new Scanner(System.in).nextInt();
-        int randomNumber = (int) (Math.random() * 100) + 1;
 
-        
-        int attempts = 0;
-        while(userGuess != randomNumber && attempts <= 7) {
-            attempts++;
+        boolean playAgain = true;
 
-            if(userGuess < randomNumber) {
-                System.out.println("Too low! Try again.");
-            } else {
-                System.out.println("Too high! Try again.");
-            }
-            System.out.println("Attempts left: " + (7 - attempts));
-            userGuess = new Scanner(System.in).nextInt();
+        while (playAgain) {
 
-            if(attempts == 7) {
-                System.out.println("Play Again? (Y/N)");
-                String playAgain = new Scanner(System.in).nextLine();
-                if(playAgain.equalsIgnoreCase("Y")) {
-                    startGame();
-                } else {
-                    System.out.println("Thanks for playing!");
-                    System.exit(0);
+            int randomNumber = random.nextInt(100) + 1;
+            int attempts = 0;
+            int maxAttempts = 7;
+            boolean guessed = false;
+
+            System.out.println("\n========== ROUND " + round + " ==========");
+
+            while (attempts < maxAttempts) {
+
+                System.out.print("Enter your guess (1-100): ");
+                int userGuess = sc.nextInt();
+
+                attempts++;
+
+                if (userGuess == randomNumber) {
+
+                    guessed = true;
+                    System.out.println("Correct! You guessed the number.");
+
+                    int score = maxAttempts - attempts + 1;
+
+                    if (score > highestScore) {
+                        highestScore = score;
+                    }
+
+                    System.out.println("You guessed it in " + attempts + " attempts.");
+                    break;
                 }
-                break;
+
+                else if (userGuess < randomNumber) {
+                    System.out.println("Too Low!");
+                }
+
+                else {
+                    System.out.println("Too High!");
+                }
+
+                System.out.println("Attempts Left: " + (maxAttempts - attempts));
             }
-        }
-        if(userGuess == randomNumber) {
-            HighestScore = 7 - attempts;
-            System.out.println("Correct! You guessed the number: " + randomNumber);
-        } else {
-            System.out.println("Sorry, the correct number was: " + randomNumber);
+
+            if (!guessed) {
+                System.out.println("\nYou Lost!");
+                System.out.println("Correct Number was: " + randomNumber);
+            }
+
+            System.out.println("Round " + round + " completed.");
+
+            round++;
+
+            System.out.print("\nPlay Again? (Y/N): ");
+            char choice = sc.next().charAt(0);
+
+            if (choice != 'Y' && choice != 'y') {
+                playAgain = false;
+            }
         }
     }
 
     public void viewHighestScore() {
-        System.out.println("Highest Score: " + HighestScore);
+
+        System.out.println("Highest Score: " + highestScore);
     }
 
     public void resetHighestScore() {
-        HighestScore = 0;
-        System.out.println("Highest score has been reset.");
+
+        highestScore = 0;
+        System.out.println("Highest Score Reset Successfully.");
     }
 }
